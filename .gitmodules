@@ -1,0 +1,3 @@
+[submodule "graphics-studies"]
+	path = graphics-studies
+	url = https://github.com/bheiskell/graphics-studies.git

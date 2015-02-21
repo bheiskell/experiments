@@ -25,6 +25,10 @@ cp -r !(package.json|bin|node_modules|README.md|LICENSE|"$TARGET") "$TARGET"
 #cp CNAME "$TARGET/CNAME"
 
 cd "$TARGET"
+
+# Remove dangling submodules
+rm -rf */.git
+
 git init
 git config user.name "$GH_NAME"
 git config user.email "$GH_EMAIL"
