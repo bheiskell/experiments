@@ -11,6 +11,7 @@
     "deploy": "./bin/deploy-ghpages.sh"
   },
   "devDependencies": {
+    "generator-angular": "^0.11.1",
     "travis-encrypt": "^1.1.1"
   }
 }
