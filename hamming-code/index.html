@@ -1,0 +1,256 @@
+<html>
+<head>
+<style>
+th, td {
+    padding: 0.25em 0.5em;
+    text-align: center;
+}
+th {
+    background-color: #eee;
+}
+</style>
+</head>
+<body>
+
+<p>
+This page generates a Hamming Code given an input ASCII string. This tool is only an educational exercise.
+</p>
+
+<label>Input String: <input type="text" id="input"/></label>
+<table>
+<tr id="hamming-indexes"></tr>
+<tr id="input-binary"></tr>
+<tr id="hamming-code"></tr>
+</table>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script>
+/**
+ * Hamming code stream.
+ */
+function HammingCode() {
+    // Hamming code is one indexed (in this implementation)
+    this.index = 1;
+
+    // Encoded list is zero indexed
+    this.encoded = [];
+}
+
+/**
+ * Append all bits using this.appendBit(bit);
+ * @param bits The bits to append
+ */
+HammingCode.prototype.appendBits = function(bits) {
+    for (var i = 0; i < bits.length; i++) {
+        this.appendBit(+bits[i]);
+    }
+}
+
+/**
+ * Appends a bit to the encoded index, populating and adjusting the appropriate
+ * power of two indexes.
+ * @param bit The bit to append
+ */
+HammingCode.prototype.appendBit = function(bit) {
+
+    if ( bit !== 0 && bit !== 1) {
+        throw new Error('appendBit only accepts 0 or 1: ' + bit);
+    }
+
+    while (this._isTwoPower(this.index)) {
+        this.encoded.push(0);
+        this.index++;
+    }
+    this.encoded.push(bit);
+
+    if (bit === 1) {
+        var encodedIndex = 1;
+        var remainingIndex = this.index;
+
+        while (remainingIndex !== 0) {
+            if ((encodedIndex & remainingIndex) !== 0) {
+                this._flip(encodedIndex);
+                remainingIndex = remainingIndex ^ encodedIndex;
+            }
+            encodedIndex = encodedIndex << 1;
+        }
+    }
+
+    this.index++;
+};
+
+/**
+ * Get a copy of the Hamming Code.
+ * @return List of bits
+ */
+HammingCode.prototype.getCode = function() {
+    return this.encoded.slice();
+};
+
+/**
+ * Flip the bit in the encoded list for a given Hamming Code index.
+ *
+ * Because we're not using the zero bit parity check, hamming code indexes are
+ * 1 indexed, while the encoded list implementation is zero indexed. This
+ * function reconciles that difference.
+ *
+ * @param index The one indexed Hamming Code index
+ */
+HammingCode.prototype._flip = function(index) {
+    this.encoded[index-1] = (1 === this.encoded[index-1]) ? 0 : 1;
+};
+
+/**
+ * Check that a given index is a power of two.
+ * @param index The index to check
+ * @return true if a power of two
+ */
+HammingCode.prototype._isTwoPower = function(index) {
+    while (index !== 0) {
+        if (index === 1) {
+            return true;
+        } else if ((index & 1) === 1) {
+            return false;
+        } else {
+            index = index >> 1;
+        }
+    }
+
+    return false;
+};
+
+/**
+ * Execute a few quick tests of the HammingCode prototype.
+ */
+HammingCode.test = function() {
+    var hammingCode = new HammingCode();
+
+    console.log('1 is power of two (true)',  hammingCode._isTwoPower(1));
+    console.log('2 is power of two (true)',  hammingCode._isTwoPower(2));
+    console.log('3 is power of two (false)', hammingCode._isTwoPower(3));
+    console.log('6 is power of two (false)', hammingCode._isTwoPower(6));
+
+    var compare = function(l, r) {
+        if (l.length !== r.length) {
+            console.log('Length mismatch', l.length, r.length, r);
+            return false;
+        }
+        for (var i = 0; i < l.length; i++) {
+            if (l[i] !== r[i]) {
+                console.log('Bit position mismatch', i, r);
+                return false;
+            }
+        }
+        return true;
+    };
+
+    hammingCode.appendBit(1);
+    console.log('Hamming code for 1 === 111', compare([1,1,1], hammingCode.getCode()));
+
+    hammingCode.appendBit(0);
+    console.log('Hamming code for 10 === 11100', compare([1,1,1,0,0], hammingCode.getCode()));
+
+    hammingCode.appendBit(1);
+    console.log('Hamming code for 10 === 101101', compare([1,0,1,1,0,1], hammingCode.getCode()));
+
+    hammingCode.appendBit(1);
+    console.log('Hamming code for 10 === 101101', compare([0,1,1,0,0,1,1], hammingCode.getCode()));
+
+    hammingCode = new HammingCode();
+    hammingCode.appendBits([0,0,0]);
+    console.log('Hamming code for 000 === 000000', compare([0,0,0,0,0,0], hammingCode.getCode()));
+};
+
+HammingCode.test();
+
+/**
+ * Convert a ASCII string to a binary stream (left least significant).
+ * @param input The input string
+ * @return Binary list
+ */
+function stringToBinary(input) {
+    var binaryList = [];
+    for (var i = 0; i < input.length; i++) {
+        // obtain binary string of the character with left most significant bit
+        var compact = input[i].charCodeAt(0).toString(2);
+
+        // left pad with zeros to 8 bits
+        var padded = new Array(9 - compact.length).join('0') + compact;
+
+        // reverse to obtain right most significant ordering (we read the stream left to right)
+        var reversedList = padded.split('').reverse();
+
+        binaryList = binaryList.concat(reversedList);
+    }
+    return binaryList;
+}
+
+/**
+ * Update the UI given a string input.
+ */
+function updateUI(input) {
+    var bits = stringToBinary(input);
+
+    var hammingCode = new HammingCode();
+    hammingCode.appendBits(bits);
+
+    var code = hammingCode.getCode();
+
+    console.log('Hamming code for "' + input + '" with binary list "' + bits + '" is "' + code + '"');
+
+    var table = $('table');
+    var hammingIndexes = $('#hamming-indexes').empty().append('<th/>');
+    var hammingCodes   = $('#hamming-code')   .empty().append('<th>Hamming Code</th>');
+    var inputBinary    = $('#input-binary')   .empty().append('<th>Input</th>');
+
+    $('.powers').remove();
+
+
+    var currPower = 1;
+    var powerRows = [];
+    while (code.length !== 0 && (code.length >> currPower) !== 0) {
+        var powerRow = $('<tr class="powers"/>');
+        powerRow.append($('<th/>').text(1 << (currPower - 1)));
+
+        powerRows.push(powerRow);
+        table.append(powerRow);
+
+        currPower++;
+    }
+
+    for (var codeIndex = 0; codeIndex < code.length; codeIndex++) {
+        var hammingIndex = codeIndex + 1;
+        var hammingCodeNode = $('<td/>').text(code[codeIndex]);
+
+        if (hammingCode._isTwoPower(hammingIndex)) {
+            hammingCodeNode.css('font-weight', 'bold');
+            inputBinary.append($('<td/>'));
+        } else {
+            inputBinary.append($('<td/>').text(bits.shift())); //mutates bits
+        }
+
+        for (var power = 0; power < powerRows.length; power++) {
+            var masked = (1 << power) & (hammingIndex);
+            var cell = $('<td/>');
+            if (masked !== 0) {
+                cell.text(code[codeIndex])
+
+                var exactMatch = hammingIndex === (1 << power);
+                if (exactMatch) {
+                    cell.css('background-color', '#f8f8f8').css('font-weight', 'bold');
+                }
+            }
+            powerRows[power].append(cell);
+        }
+
+        hammingIndexes.append( $('<th/>').text(hammingIndex) );
+        hammingCodes.append( hammingCodeNode );
+    }
+};
+
+$('#input').focus().keyup(function() {
+    updateUI($(this).val());
+});
+</script>
+</body>
+</html>
