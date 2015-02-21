@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - "0.10"
+script: "npm run-script deploy"
+
+env:
+  global:
+    - GH_NAME: "Benjamin Heiskell"
+    - GH_EMAIL: "ben.heiskell@xdxa.org"
+    - GH_REF: "github.com/bheiskell/experiments.git"
+    - secure: "dyQevnJg73oHmmkHzA+j3dQHqIcrjgjEv9/S6VgXfN/19AApe6hK8qnuwDGbk3eVqcHhx7pCqKxXO/+WLAuxVkDBJPOktGpkX5/x6LUxxJ+uaawTnFdgnOMIBJwdTD7KlI/BG8Ht8LKPRNzHAkWtHIVVxuHbJOMXSGSrESdEVSU="
+
+branches:
+  only:
+    - master
