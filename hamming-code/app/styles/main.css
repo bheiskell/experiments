@@ -1,0 +1,11 @@
+/* Move to CSS file */
+th, td {
+    padding: 0.25em 0.5em;
+    text-align: center;
+}
+th {
+    background-color: #eee;
+}
+.wrong {
+    background-color: #fdd;
+}
