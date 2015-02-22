@@ -1,0 +1,71 @@
+<div>
+    <style>
+        /* Move to CSS file */
+        th, td {
+            padding: 0.25em 0.5em;
+            text-align: center;
+        }
+        th {
+            background-color: #eee;
+        }
+        .wrong {
+            background-color: #fdd;
+        }
+    </style>
+
+    <p>
+        This page generates a Hamming Code given an input ASCII string. This
+        tool is only an educational exercise.
+    </p>
+    <p>
+        Hamming Codes reserve every index which is a power of two (i.e., 1, 2,
+        4, 8, etc) to serve as a boolean checksum for both itself and some of
+        the remaining bits. Each reserved index verifies other indexes which
+        are non-zero when a binary mask is applied. This is the pattern you
+        see below.  If a single bit is flipped, the indexes of the incorrect
+        boolean checksums can be summed to find the flipped bit.
+    </p>
+    <p>
+        Note: This implementation does not utilize the zeroth index for two bit
+        flip detection.
+    </p>
+
+    <label>
+        Input String:
+        <input type="text" ng-model="input" ng-change="onInputChange(input)"/>
+    </label>
+    <table>
+        <tr>
+            <th>&nbsp;</th>
+            <th ng-repeat="hammingIndex in hammingIndexes">{{ hammingIndex }}</th>
+        </tr>
+        <tr>
+            <th>Input</th>
+            <td ng-repeat="bit in inputBits track by $index">{{ bit }}</td>
+        </tr>
+        <tr>
+            <th>Encoded</th>
+            <td ng-repeat="bit in encodedBits track by $index">{{ bit }}</td>
+        </tr>
+        <tr>
+            <th>Received</th>
+            <td ng-repeat="receivedBit in receivedBits track by $index">
+                <input type="button" value="{{receivedBit.bit}}"
+                     ng-click="flip($index)"
+                     ng-class="{wrong: receivedBit.flipped}" />
+            </td>
+        </tr>
+        <tr ng-repeat="powerRow in explodedCalc">
+            <th>{{ powerRow.powerOfTwo }}</th>
+            <td ng-repeat="receivedBit in powerRow.bits track by $index"
+                ng-class="{ wrong: receivedBit.flipped }">{{ receivedBit.bit }}</td>
+        </tr>
+    </table>
+    <p>
+        <span ng-hide="incorrectIndexes.length === 0" >
+            The incorrect indexes summed:
+            {{ incorrectIndexes.join(' + ') }} = {{ incorrectIndex }}
+        </span>
+        &nbsp;
+    </p>
+</div>

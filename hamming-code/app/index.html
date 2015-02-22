@@ -1,0 +1,63 @@
+<!doctype html>
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+        <title>Hamming Code</title>
+
+        <!-- build:css(.) styles/vendor.css -->
+        <!-- bower:css -->
+        <!-- endbower -->
+        <!-- endbuild -->
+        <!-- build:css(.tmp) styles/main.css -->
+        <link rel="stylesheet" href="styles/main.css">
+        <!-- endbuild -->
+
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
+        <link rel="stylesheet" href="http://www.xdxa.org/css/style.css" />
+
+        <script src="http://www.xdxa.org/js/libs/modernizr-2.0.6.min.js"></script>
+
+        <link href="http://www.xdxa.org/favicon.png" rel="shortcut icon" />
+</head>
+<body ng-app="hammingCodeApp">
+    <div id="header-container">
+        <header class="wrapper clearfix">
+            <h1 id="title">Hamming Code</h1>
+        </header>
+    </div>
+    <div id="main-container">
+        <div id="main" class="wrapper clearfix">
+
+            <div ng-include="'views/main.html'" ng-controller="MainCtrl"></div>
+            </div>
+
+            <!-- build:js(.) scripts/vendor.js -->
+            <!-- bower:js -->
+            <script src="bower_components/angular/angular.js"></script>
+            <script src="bower_components/angular-underscore-module/angular-underscore-module.js"></script>
+            <script src="bower_components/underscore/underscore.js"></script>
+            <!-- endbower -->
+            <!-- endbuild -->
+
+            <!-- build:js({.tmp,app}) scripts/scripts.js -->
+            <script src="scripts/services/binaryutils.js"></script>
+            <script src="scripts/services/hammingcode.js"></script>
+            <script src="scripts/app.js"></script>
+            <script src="scripts/controllers/main.js"></script>
+            <!-- endbuild -->
+        </div>
+    </div>
+
+    <div id="footer-container">
+        <footer class="wrapper">
+            <p><a href="https://github.com/bheiskell/experiments">Source Code</a></p>
+        </footer>
+    </div>
+</body>
+</html>
