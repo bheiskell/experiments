@@ -7,6 +7,12 @@
 # Exit on error or undefined
 set -eu
 
+(
+    cd hamming-code
+    npm install
+    npm run build
+)
+
 TARGET=gh-pages
 
 if [ -d "$TARGET" ]; then
@@ -26,8 +32,8 @@ cp -r !(package.json|bin|node_modules|README.md|LICENSE|"$TARGET") "$TARGET"
 
 cd "$TARGET"
 
-# Remove dangling submodules
-rm -rf */.git
+# Remove dangling submodules and build dependencies
+rm -rf */.git */node_modules */bower_components */.gitignore
 
 git init
 git config user.name "$GH_NAME"
